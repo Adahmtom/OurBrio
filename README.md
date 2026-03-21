@@ -1,8 +1,8 @@
-# SiteTact Tech Agency Website
+# OurBrio Website
 
 A modern, animated tech agency website built with Next.js 14, TypeScript, Tailwind CSS, and Framer Motion.
 
-![SiteTact Preview](preview.png)
+![OurBrio Preview](preview.png)
 
 ## ✨ Features
 
@@ -31,7 +31,7 @@ A modern, animated tech agency website built with Next.js 14, TypeScript, Tailwi
 1. **Clone or download the project**
 
 ```bash
-cd sitetact
+cd OurBrio
 ```
 
 2. **Install dependencies**
