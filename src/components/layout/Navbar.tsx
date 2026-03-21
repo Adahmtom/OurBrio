@@ -46,15 +46,15 @@ export function Navbar() {
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.5, ease: [0.25, 0.4, 0.25, 1] }}
           className={cn(
-            "flex items-center gap-1 py-2 px-2 rounded-full border transition-all duration-300",
-            isScrolled 
-              ? "bg-black/90 backdrop-blur-xl border-white/10 shadow-2xl shadow-emerald-500/10" 
+            "flex items-center gap-2 py-3 px-3 rounded-full border transition-all duration-300",
+            isScrolled
+              ? "bg-black/90 backdrop-blur-xl border-white/10 shadow-2xl shadow-emerald-500/10"
               : "bg-black/50 backdrop-blur-md border-white/5"
           )}
         >
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 px-4 py-2">
-            <Image src="/logo.svg" alt="OurBrio" width={80} height={32} className="h-8 w-auto" priority />
+          <Link href="/" className="flex items-center gap-2 px-5 py-2.5">
+            <Image src="/logo.svg" alt="OurBrio" width={140} height={52} className="h-13 w-auto" priority />
           </Link>
 
           {/* Nav Items */}
@@ -66,7 +66,7 @@ export function Navbar() {
                 href={item.url}
                 onClick={() => setActiveTab(item.name)}
                 className={cn(
-                  "relative cursor-pointer text-sm font-medium px-5 py-2.5 rounded-full transition-all duration-300",
+                  "relative cursor-pointer text-base font-medium px-6 py-3 rounded-full transition-all duration-300",
                   "text-white/60 hover:text-white",
                   isActive && "text-white"
                 )}
@@ -80,9 +80,9 @@ export function Navbar() {
                     transition={{ type: "spring", stiffness: 350, damping: 30 }}
                   >
                     <div className="absolute inset-0 bg-emerald-500/20 rounded-full" />
-                    <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-12 h-1 bg-emerald-400 rounded-full">
-                      <div className="absolute w-16 h-8 bg-emerald-400/30 rounded-full blur-lg -top-2 -left-2" />
-                      <div className="absolute w-12 h-6 bg-emerald-400/40 rounded-full blur-md -top-1 left-0" />
+                    <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-14 h-1 bg-emerald-400 rounded-full">
+                      <div className="absolute w-18 h-8 bg-emerald-400/30 rounded-full blur-lg -top-2 -left-2" />
+                      <div className="absolute w-14 h-6 bg-emerald-400/40 rounded-full blur-md -top-1 left-0" />
                     </div>
                   </motion.div>
                 )}
@@ -95,9 +95,9 @@ export function Navbar() {
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="flex items-center gap-2 ml-2 px-5 py-2.5 rounded-full bg-emerald-500 text-black font-semibold text-sm hover:bg-emerald-400 transition-colors"
+              className="flex items-center gap-2 ml-2 px-6 py-3 rounded-full bg-emerald-500 text-black font-semibold text-base hover:bg-emerald-400 transition-colors"
             >
-              <Rocket className="w-4 h-4" />
+              <Rocket className="w-5 h-5" />
               Start Project
             </motion.button>
           </Link>
@@ -114,10 +114,10 @@ export function Navbar() {
           isScrolled ? "bg-black/90 backdrop-blur-xl border-b border-white/10" : "bg-transparent"
         )}
       >
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between h-16">
+        <div className="container mx-auto px-5">
+          <div className="flex items-center justify-between h-20">
             <Link href="/" className="flex items-center gap-2">
-              <Image src="/logo.svg" alt="OurBrio" width={100} height={36} className="h-9 w-auto" priority />
+              <Image src="/logo.svg" alt="OurBrio" width={140} height={52} className="h-13 w-auto" priority />
             </Link>
 
             <button
@@ -125,7 +125,7 @@ export function Navbar() {
               className="p-2 text-white"
               aria-label="Toggle menu"
             >
-              {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+              {isMobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
             </button>
           </div>
         </div>
@@ -137,7 +137,7 @@ export function Navbar() {
           initial={{ y: 100, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.5 }}
-          className="flex items-center justify-around py-3 px-2 rounded-2xl bg-black/90 backdrop-blur-xl border border-white/10 shadow-2xl"
+          className="flex items-center justify-around py-4 px-3 rounded-2xl bg-black/90 backdrop-blur-xl border border-white/10 shadow-2xl"
         >
           {navItems.slice(0, 5).map((item) => {
             const Icon = item.icon;
@@ -148,11 +148,11 @@ export function Navbar() {
                 href={item.url}
                 onClick={() => setActiveTab(item.name)}
                 className={cn(
-                  "relative flex flex-col items-center gap-1 px-3 py-2 rounded-xl transition-all",
+                  "relative flex flex-col items-center gap-1 px-4 py-2.5 rounded-xl transition-all",
                   isActive ? "text-emerald-400" : "text-white/50"
                 )}
               >
-                <Icon size={20} strokeWidth={2} />
+                <Icon size={24} strokeWidth={2} />
                 {isActive && (
                   <motion.div
                     layoutId="tubelight-mobile"
