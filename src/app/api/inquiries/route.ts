@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
-import { sendEmail, projectInquiryEmail, confirmationEmail } from "@/lib/email";
 import { z } from "zod";
 
 const inquirySchema = z.object({
@@ -37,37 +36,6 @@ export async function POST(request: NextRequest) {
         preferredDate: new Date(data.preferredDate),
       },
     });
-
-    // Send emails independently — never block the save if email fails
-    try {
-      const notificationEmail = process.env.NOTIFICATION_EMAIL || process.env.GMAIL_USER;
-      if (notificationEmail) {
-        await sendEmail({
-          to: notificationEmail,
-          subject: `🚀 New Project Inquiry: ${data.businessName}`,
-          html: projectInquiryEmail({
-            businessName: data.businessName,
-            contactName: data.contactName,
-            email: data.email,
-            services: data.selectedServices,
-            budget: data.budget,
-            preferredDate: data.preferredDate,
-            preferredTime: data.preferredTime,
-          }),
-        });
-      }
-      await sendEmail({
-        to: data.email,
-        subject: "Thank you for your inquiry - OurBrio",
-        html: confirmationEmail({
-          name: data.contactName,
-          preferredDate: data.preferredDate,
-          preferredTime: data.preferredTime,
-        }),
-      });
-    } catch (emailError) {
-      console.error("Email sending failed (non-critical):", emailError);
-    }
 
     return NextResponse.json({ success: true, id: inquiry.id }, { status: 201 });
   } catch (error) {

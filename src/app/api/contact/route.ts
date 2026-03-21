@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
-import { sendEmail, contactSubmissionEmail, confirmationEmail } from "@/lib/email";
 import { z } from "zod";
 
 const contactSchema = z.object({
@@ -21,25 +20,6 @@ export async function POST(request: NextRequest) {
     const submission = await prisma.contactSubmission.create({
       data,
     });
-
-    // Send emails independently — never block the save if email fails
-    try {
-      const notificationEmail = process.env.NOTIFICATION_EMAIL || process.env.GMAIL_USER;
-      if (notificationEmail) {
-        await sendEmail({
-          to: notificationEmail,
-          subject: `📬 New Contact: ${data.name}`,
-          html: contactSubmissionEmail(data),
-        });
-      }
-      await sendEmail({
-        to: data.email,
-        subject: "We received your message - OurBrio",
-        html: confirmationEmail({ name: data.name }),
-      });
-    } catch (emailError) {
-      console.error("Email sending failed (non-critical):", emailError);
-    }
 
     return NextResponse.json({ success: true, id: submission.id }, { status: 201 });
   } catch (error) {
