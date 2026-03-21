@@ -15,6 +15,7 @@ import {
   LogOut,
   ChevronLeft,
   Menu,
+  Users,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
@@ -26,6 +27,7 @@ const navItems = [
   { href: "/admin/case-studies", label: "Case Studies", icon: Briefcase },
   { href: "/admin/testimonials", label: "Testimonials", icon: Quote },
   { href: "/admin/calendar", label: "Calendar", icon: Calendar },
+  { href: "/admin/users", label: "Team Members", icon: Users },
 ];
 
 export function AdminSidebar() {
@@ -61,7 +63,7 @@ export function AdminSidebar() {
                 <span className="text-black font-bold">ST</span>
               </div>
               <span className="font-bold text-xl text-white">
-                Site<span className="text-emerald-400">Tact</span>
+                Our<span className="text-emerald-400">Brio</span>
               </span>
             </Link>
           )}
