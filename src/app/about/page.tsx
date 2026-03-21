@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { ButtonColorful } from "@/components/ui/button-colorful";
 import { Section } from "@/components/ui/section";
 import { ScrollReveal } from "@/components/ui/scroll-reveal";
+import { ContactFormSection } from "@/components/ui/contact-form-section";
 
 const values = [
   {
@@ -269,24 +270,7 @@ export default function AboutPage() {
         </div>
       </Section>
 
-      {/* CTA Section */}
-      <Section dataSection="cta" dark={false} className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 via-transparent to-green-500/10" />
-        <ScrollReveal>
-          <div className="relative text-center max-w-3xl mx-auto">
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
-              Let&apos;s Build Something Great Together
-            </h2>
-            <p className="text-white/50 text-lg mb-10">
-              We help organizations not only adapt to digital transformation, but
-              lead within it.
-            </p>
-            <Link href="/contact">
-              <ButtonColorful label="Get in Touch" />
-            </Link>
-          </div>
-        </ScrollReveal>
-      </Section>
+      <ContactFormSection />
     </>
   );
 }

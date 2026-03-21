@@ -24,102 +24,100 @@ export function Navbar() {
 
   useEffect(() => {
     const currentItem = navItems.find((item) => item.url === pathname);
-    if (currentItem) {
-      setActiveTab(currentItem.name);
-    }
+    if (currentItem) setActiveTab(currentItem.name);
   }, [pathname]);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
-    };
+    const handleScroll = () => setIsScrolled(window.scrollY > 50);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   return (
     <>
-      {/* Desktop Tubelight Navbar */}
-      <div className="hidden md:block fixed top-6 left-1/2 -translate-x-1/2 z-50">
-        <motion.div
-          initial={{ y: -100, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.5, ease: [0.25, 0.4, 0.25, 1] }}
-          className={cn(
-            "flex items-center gap-2 py-3 px-3 rounded-full border transition-all duration-300",
-            isScrolled
-              ? "bg-black/90 backdrop-blur-xl border-white/10 shadow-2xl shadow-emerald-500/10"
-              : "bg-black/50 backdrop-blur-md border-white/5"
-          )}
-        >
-          {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 px-5 py-2.5">
-            <Image src="/logo.svg" alt="OurBrio" width={140} height={52} className="h-13 w-auto" priority />
-          </Link>
+      {/* Desktop Full-Width Navbar */}
+      <motion.header
+        initial={{ y: -80, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.5, ease: [0.25, 0.4, 0.25, 1] }}
+        className={cn(
+          "hidden md:block fixed top-0 left-0 right-0 z-50 transition-all duration-300",
+          isScrolled
+            ? "bg-black/95 backdrop-blur-xl border-b border-white/10 shadow-2xl shadow-black/50"
+            : "bg-black/60 backdrop-blur-md border-b border-white/5"
+        )}
+      >
+        <div className="container mx-auto px-6 lg:px-10">
+          <div className="flex items-center justify-between h-20">
+            {/* Logo */}
+            <Link href="/" className="flex items-center flex-shrink-0">
+              <Image src="/logo.svg" alt="OurBrio" width={150} height={56} className="h-14 w-auto" priority />
+            </Link>
 
-          {/* Nav Items */}
-          {navItems.map((item) => {
-            const isActive = activeTab === item.name;
-            return (
-              <Link
-                key={item.name}
-                href={item.url}
-                onClick={() => setActiveTab(item.name)}
-                className={cn(
-                  "relative cursor-pointer text-base font-medium px-6 py-3 rounded-full transition-all duration-300",
-                  "text-white/60 hover:text-white",
-                  isActive && "text-white"
-                )}
-              >
-                <span className="relative z-10">{item.name}</span>
-                {isActive && (
-                  <motion.div
-                    layoutId="tubelight-desktop"
-                    className="absolute inset-0 rounded-full -z-10"
-                    initial={false}
-                    transition={{ type: "spring", stiffness: 350, damping: 30 }}
+            {/* Nav Items */}
+            <nav className="flex items-center gap-1">
+              {navItems.map((item) => {
+                const isActive = activeTab === item.name;
+                return (
+                  <Link
+                    key={item.name}
+                    href={item.url}
+                    onClick={() => setActiveTab(item.name)}
+                    className={cn(
+                      "relative whitespace-nowrap text-sm font-medium px-4 py-2.5 rounded-full transition-all duration-300",
+                      "text-white/60 hover:text-white",
+                      isActive && "text-white"
+                    )}
                   >
-                    <div className="absolute inset-0 bg-emerald-500/20 rounded-full" />
-                    <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-14 h-1 bg-emerald-400 rounded-full">
-                      <div className="absolute w-18 h-8 bg-emerald-400/30 rounded-full blur-lg -top-2 -left-2" />
-                      <div className="absolute w-14 h-6 bg-emerald-400/40 rounded-full blur-md -top-1 left-0" />
-                    </div>
-                  </motion.div>
-                )}
-              </Link>
-            );
-          })}
+                    <span className="relative z-10">{item.name}</span>
+                    {isActive && (
+                      <motion.div
+                        layoutId="tubelight-desktop"
+                        className="absolute inset-0 rounded-full -z-10"
+                        initial={false}
+                        transition={{ type: "spring", stiffness: 350, damping: 30 }}
+                      >
+                        <div className="absolute inset-0 bg-emerald-500/20 rounded-full" />
+                        <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-10 h-1 bg-emerald-400 rounded-full">
+                          <div className="absolute w-14 h-6 bg-emerald-400/30 rounded-full blur-lg -top-2 -left-2" />
+                        </div>
+                      </motion.div>
+                    )}
+                  </Link>
+                );
+              })}
+            </nav>
 
-          {/* Start Project Button */}
-          <Link href="/start-project">
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="flex items-center gap-2 ml-2 px-6 py-3 rounded-full bg-emerald-500 text-black font-semibold text-base hover:bg-emerald-400 transition-colors"
-            >
-              <Rocket className="w-5 h-5" />
-              Start Project
-            </motion.button>
-          </Link>
-        </motion.div>
-      </div>
+            {/* Start Project Button */}
+            <Link href="/start-project" className="flex-shrink-0">
+              <motion.button
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
+                className="flex items-center gap-2 px-6 py-3 rounded-full bg-emerald-500 text-black font-semibold text-sm hover:bg-emerald-400 transition-colors whitespace-nowrap"
+              >
+                <Rocket className="w-4 h-4" />
+                Start Project
+              </motion.button>
+            </Link>
+          </div>
+        </div>
+      </motion.header>
 
-      {/* Mobile Navbar */}
+      {/* Mobile Top Navbar */}
       <motion.nav
-        initial={{ y: -100 }}
+        initial={{ y: -80 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.5 }}
         className={cn(
           "md:hidden fixed top-0 left-0 right-0 z-50 transition-all duration-300",
-          isScrolled ? "bg-black/90 backdrop-blur-xl border-b border-white/10" : "bg-transparent"
+          isScrolled ? "bg-black/95 backdrop-blur-xl border-b border-white/10" : "bg-transparent"
         )}
       >
-        <div className="container mx-auto px-5">
+        <div className="px-5">
           <div className="flex items-center justify-between h-20">
-            <Link href="/" className="flex items-center gap-2">
-              <Image src="/logo.svg" alt="OurBrio" width={140} height={52} className="h-13 w-auto" priority />
+            <Link href="/" className="flex items-center">
+              <Image src="/logo.svg" alt="OurBrio" width={130} height={48} className="h-12 w-auto" priority />
             </Link>
-
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className="p-2 text-white"
@@ -197,14 +195,11 @@ export function Navbar() {
                     >
                       <Link
                         href={item.url}
-                        onClick={() => {
-                          setActiveTab(item.name);
-                          setIsMobileMenuOpen(false);
-                        }}
+                        onClick={() => { setActiveTab(item.name); setIsMobileMenuOpen(false); }}
                         className={cn(
                           "flex items-center gap-4 px-5 py-4 rounded-xl transition-all",
-                          isActive 
-                            ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" 
+                          isActive
+                            ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
                             : "text-white/70 hover:bg-white/5"
                         )}
                       >

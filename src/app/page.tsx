@@ -13,6 +13,7 @@ import { MagneticButton } from "@/components/ui/magnetic-button";
 import { TypingAnimation, CountUp } from "@/components/ui/typing-animation";
 import { EnhancedCTA, GlowingCTA } from "@/components/ui/enhanced-cta";
 import { AnimatedBorderCard, SectionShadow } from "@/components/ui/animated-border-card";
+import { ContactFormSection } from "@/components/ui/contact-form-section";
 
 const crmPlatforms = [
   { name: "HubSpot", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/hubspot/hubspot-original.svg" },
@@ -394,39 +395,7 @@ export default function Home() {
 
       <SectionShadow />
 
-      {/* CTA Section */}
-      <section data-section="cta" className="py-24 md:py-32 bg-black relative overflow-hidden">
-        <div className="absolute inset-0">
-          <Image src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=1920&h=800&fit=crop" alt="Office" fill className="object-cover opacity-20" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/90 to-black/80" />
-        </div>
-
-        <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.1, 0.2, 0.1] }} transition={{ duration: 8, repeat: Infinity }} className="absolute top-1/4 left-1/4 w-96 h-96 bg-emerald-500/30 rounded-full blur-[120px]" />
-        <motion.div animate={{ scale: [1.2, 1, 1.2], opacity: [0.1, 0.15, 0.1] }} transition={{ duration: 10, repeat: Infinity }} className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-green-500/30 rounded-full blur-[100px]" />
-
-        <div className="container mx-auto px-4 md:px-6 relative z-10">
-          <ScrollReveal>
-            <div className="text-center max-w-4xl mx-auto">
-              <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-8">Have a Project in Mind?</h2>
-              <p className="text-white/60 text-xl md:text-2xl mb-12 leading-relaxed">
-                Let&apos;s build something powerful together. Discuss how we can support your digital growth with a tailored solution.
-              </p>
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
-                <MagneticButton>
-                  <EnhancedCTA href="/start-project" variant="primary" size="xl">
-                    Start Your Project
-                  </EnhancedCTA>
-                </MagneticButton>
-                <MagneticButton>
-                  <EnhancedCTA href="/case-studies" variant="secondary" size="xl">
-                    View Our Work
-                  </EnhancedCTA>
-                </MagneticButton>
-              </div>
-            </div>
-          </ScrollReveal>
-        </div>
-      </section>
+      <ContactFormSection />
     </>
   );
 }

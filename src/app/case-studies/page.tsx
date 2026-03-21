@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { ButtonColorful } from "@/components/ui/button-colorful";
 import { Section } from "@/components/ui/section";
 import { ScrollReveal } from "@/components/ui/scroll-reveal";
+import { ContactFormSection } from "@/components/ui/contact-form-section";
 
 // Placeholder case studies - you'll replace these with real content
 const caseStudies = [
@@ -263,34 +264,7 @@ export default function CaseStudiesPage() {
         </ScrollReveal>
       </Section>
 
-      {/* CTA Section */}
-      <Section dataSection="cta" dark={false} className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 via-transparent to-green-500/10" />
-        <ScrollReveal>
-          <div className="relative text-center max-w-3xl mx-auto">
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
-              Ready to Be Our Next Success Story?
-            </h2>
-            <p className="text-white/50 text-lg mb-10">
-              Let&apos;s discuss how we can help you achieve similar results for
-              your business.
-            </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Link href="/contact">
-                <ButtonColorful label="Start Your Project" />
-              </Link>
-              <Link href="/services">
-                <Button
-                  variant="outline"
-                  className="border-white/20 text-white hover:bg-white/10"
-                >
-                  View Our Services
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </ScrollReveal>
-      </Section>
+      <ContactFormSection />
     </>
   );
 }
