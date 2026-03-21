@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Mail, Phone, MapPin, Clock, Send, CheckCircle } from "lucide-react";
+import { Send, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ScrollReveal } from "@/components/ui/scroll-reveal";
 
@@ -22,13 +22,6 @@ const budgetRanges = [
   "$25,000 - $50,000",
   "$50,000+",
   "Not sure yet",
-];
-
-const contactInfo = [
-  { icon: Mail, label: "Email", value: "OurBrio@gmail.com", href: "mailto:OurBrio@gmail.com" },
-  { icon: Phone, label: "Phone", value: "+1 (437) 602-8100", href: "tel:+14376028100" },
-  { icon: MapPin, label: "Location", value: "Remote-first, Global", href: null },
-  { icon: Clock, label: "Response", value: "Within 24 hours", href: null },
 ];
 
 export function ContactFormSection() {
@@ -74,35 +67,8 @@ export function ContactFormSection() {
           </div>
         </ScrollReveal>
 
-        <div className="grid lg:grid-cols-5 gap-10 max-w-6xl mx-auto">
-          {/* Contact Info */}
-          <div className="lg:col-span-2">
-            <ScrollReveal direction="left">
-              <div className="space-y-6">
-                {contactInfo.map((item, i) => (
-                  <motion.div key={i} whileHover={{ x: 4 }} className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center flex-shrink-0">
-                      <item.icon className="w-5 h-5 text-emerald-400" />
-                    </div>
-                    <div>
-                      <p className="text-white/40 text-xs uppercase tracking-wider mb-0.5">{item.label}</p>
-                      {item.href ? (
-                        <a href={item.href} className="text-white hover:text-emerald-400 transition-colors font-medium">
-                          {item.value}
-                        </a>
-                      ) : (
-                        <p className="text-white font-medium">{item.value}</p>
-                      )}
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-            </ScrollReveal>
-          </div>
-
-          {/* Contact Form */}
-          <div className="lg:col-span-3">
-            <ScrollReveal direction="right" delay={0.2}>
+        <div className="max-w-2xl mx-auto">
+          <ScrollReveal>
               <div className="p-8 md:p-10 rounded-3xl bg-white/[0.02] border border-white/10">
                 {isSubmitted ? (
                   <motion.div
@@ -200,8 +166,7 @@ export function ContactFormSection() {
                   </form>
                 )}
               </div>
-            </ScrollReveal>
-          </div>
+          </ScrollReveal>
         </div>
       </div>
     </section>

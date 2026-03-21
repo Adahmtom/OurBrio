@@ -103,11 +103,11 @@ export function Footer() {
                   <motion.button
                     whileHover={{ scale: 1.02, y: -2 }}
                     whileTap={{ scale: 0.98 }}
-                    className="group flex items-center gap-3 px-8 py-4 rounded-full bg-emerald-500 text-black font-semibold text-lg shadow-lg shadow-emerald-500/25 hover:bg-emerald-400 transition-all"
+                    className="group flex items-center gap-2 px-5 py-3 sm:px-8 sm:py-4 rounded-full bg-emerald-500 text-black font-semibold text-sm sm:text-lg shadow-lg shadow-emerald-500/25 hover:bg-emerald-400 transition-all"
                   >
-                    <Rocket className="w-5 h-5" />
+                    <Rocket className="w-4 h-4 sm:w-5 sm:h-5" />
                     Start a Project
-                    <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
+                    <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 transition-transform group-hover:translate-x-1" />
                   </motion.button>
                 </Link>
                 
@@ -115,11 +115,11 @@ export function Footer() {
                   <motion.button
                     whileHover={{ scale: 1.02, y: -2 }}
                     whileTap={{ scale: 0.98 }}
-                    className="group flex items-center gap-3 px-8 py-4 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 text-white font-semibold text-lg hover:bg-white/20 hover:border-emerald-500/50 transition-all"
+                    className="group flex items-center gap-2 px-5 py-3 sm:px-8 sm:py-4 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 text-white font-semibold text-sm sm:text-lg hover:bg-white/20 hover:border-emerald-500/50 transition-all"
                   >
-                    <Mail className="w-5 h-5" />
+                    <Mail className="w-4 h-4 sm:w-5 sm:h-5" />
                     Contact Us
-                    <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
+                    <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 transition-transform group-hover:translate-x-1" />
                   </motion.button>
                 </Link>
               </motion.div>
