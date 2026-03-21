@@ -1,0 +1,168 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 0%;
+    --foreground: 0 0% 98%;
+    --primary: 142 76% 46%;
+    --primary-foreground: 0 0% 0%;
+    --secondary: 0 0% 8%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 0% 12%;
+    --muted-foreground: 0 0% 60%;
+    --accent: 142 76% 46%;
+    --accent-foreground: 0 0% 0%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 15%;
+    --input: 0 0% 15%;
+    --ring: 142 76% 46%;
+    --radius: 0.75rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    @apply bg-black text-foreground;
+    cursor: none;
+  }
+
+  /* Restore cursor on touch devices and for inputs */
+  @media (hover: none) {
+    body {
+      cursor: auto;
+    }
+  }
+
+  input, textarea, select, button, a {
+    cursor: none;
+  }
+
+  @media (hover: none) {
+    input, textarea, select, button, a {
+      cursor: auto;
+    }
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #000;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(16, 185, 129, 0.3);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(16, 185, 129, 0.5);
+}
+
+/* Selection color */
+::selection {
+  background: rgba(16, 185, 129, 0.3);
+  color: #fff;
+}
+
+/* Gradient text utility */
+.gradient-text {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 via-green-300 to-teal-400;
+}
+
+/* Glow effects */
+.glow-emerald {
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.3),
+              0 0 40px rgba(16, 185, 129, 0.2),
+              0 0 60px rgba(16, 185, 129, 0.1);
+}
+
+.glow-emerald-sm {
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.2),
+              0 0 20px rgba(16, 185, 129, 0.1);
+}
+
+/* Text glow */
+.text-glow {
+  text-shadow: 0 0 20px rgba(16, 185, 129, 0.5),
+               0 0 40px rgba(16, 185, 129, 0.3);
+}
+
+/* Border glow */
+.border-glow {
+  box-shadow: inset 0 0 0 1px rgba(16, 185, 129, 0.2),
+              0 0 20px rgba(16, 185, 129, 0.1);
+}
+
+/* Radial gradient background utility */
+.bg-gradient-radial {
+  background: radial-gradient(var(--tw-gradient-stops));
+}
+
+/* Animated gradient background */
+.animated-gradient {
+  background: linear-gradient(
+    -45deg,
+    #000,
+    #0a0a0a,
+    #001a0f,
+    #000
+  );
+  background-size: 400% 400%;
+  animation: gradientShift 15s ease infinite;
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Grid pattern overlay */
+.grid-overlay::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: 
+    linear-gradient(rgba(16, 185, 129, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(16, 185, 129, 0.03) 1px, transparent 1px);
+  background-size: 50px 50px;
+  pointer-events: none;
+}
+
+/* Section alternating backgrounds */
+.section-dark {
+  @apply bg-black;
+}
+
+.section-accent {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(0, 0, 0, 1) 50%, rgba(20, 184, 166, 0.05) 100%);
+}
+
+/* Glassmorphism */
+.glass {
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Focus styles */
+*:focus-visible {
+  outline: 2px solid rgba(16, 185, 129, 0.5);
+  outline-offset: 2px;
+}
