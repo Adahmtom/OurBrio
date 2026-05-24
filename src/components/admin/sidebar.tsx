@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { signOut } from "next-auth/react";
+import { usePathname, useRouter } from "next/navigation";
+import { useAuthActions } from "@convex-dev/auth/react";
 import { motion } from "framer-motion";
 import {
   LayoutDashboard,
@@ -32,7 +32,14 @@ const navItems = [
 
 export function AdminSidebar() {
   const pathname = usePathname();
+  const router = useRouter();
+  const { signOut } = useAuthActions();
   const [collapsed, setCollapsed] = useState(false);
+
+  const handleSignOut = async () => {
+    await signOut();
+    router.push("/admin/login");
+  };
 
   return (
     <>
@@ -81,9 +88,10 @@ export function AdminSidebar() {
         {/* Navigation */}
         <nav className="flex-1 p-4 space-y-1">
           {navItems.map((item) => {
-            const isActive = pathname === item.href || 
+            const isActive =
+              pathname === item.href ||
               (item.href !== "/admin" && pathname.startsWith(item.href));
-            
+
             return (
               <Link
                 key={item.href}
@@ -112,7 +120,7 @@ export function AdminSidebar() {
             {!collapsed && <span className="font-medium">View Site</span>}
           </Link>
           <button
-            onClick={() => signOut({ callbackUrl: "/admin/login" })}
+            onClick={handleSignOut}
             className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-zinc-400 hover:text-red-400 hover:bg-red-500/10 transition-all"
           >
             <LogOut size={20} />

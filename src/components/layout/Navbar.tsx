@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Home, Layers, Users, FolderOpen, Mail, Rocket } from "lucide-react";
+import { Menu, X, Home, Layers, Users, FolderOpen, Mail, Phone } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navItems = [
@@ -88,15 +88,15 @@ export function Navbar() {
               })}
             </nav>
 
-            {/* Start Project Button */}
-            <Link href="/start-project" className="flex-shrink-0">
+            {/* Book a Diagnosis Call Button */}
+            <Link href="/contact" className="flex-shrink-0">
               <motion.button
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.97 }}
                 className="flex items-center gap-2 px-6 py-3 rounded-full bg-emerald-500 text-black font-semibold text-sm hover:bg-emerald-400 transition-colors whitespace-nowrap"
               >
-                <Rocket className="w-4 h-4" />
-                Start Project
+                <Phone className="w-4 h-4" />
+                Book a Diagnosis Call
               </motion.button>
             </Link>
           </div>
@@ -216,12 +216,12 @@ export function Navbar() {
                   className="pt-4"
                 >
                   <Link
-                    href="/start-project"
+                    href="/contact"
                     onClick={() => setIsMobileMenuOpen(false)}
                     className="flex items-center justify-center gap-2 w-full px-6 py-4 rounded-xl bg-emerald-500 text-black font-semibold text-lg"
                   >
-                    <Rocket className="w-5 h-5" />
-                    Start a Project
+                    <Phone className="w-5 h-5" />
+                    Book a Diagnosis Call
                   </Link>
                 </motion.div>
               </div>

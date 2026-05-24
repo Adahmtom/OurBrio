@@ -53,8 +53,8 @@ export const siteConfig = {
       description: "Ready to start your project? Get in touch with our team. We'd love to hear about your ideas and discuss how we can help.",
     },
     startProject: {
-      title: "Start a Project | OurBrio",
-      description: "Tell us about your project and schedule a free consultation. Let's discuss how we can bring your vision to life.",
+      title: "Book a Diagnosis Call | OurBrio",
+      description: "Start with a $1,500 Diagnosis — a structured audit of your digital systems, goals, and gaps. Walk away with a clear roadmap.",
     },
   };
   
@@ -75,7 +75,7 @@ export const siteConfig = {
       "@type": "ContactPoint",
       telephone: "+1-234-567-890",
       contactType: "sales",
-      email: "OurBrio@gmail.com",
+      email: "info@ourbrio.com",
     },
     sameAs: [
       "https://twitter.com/ourbrio",

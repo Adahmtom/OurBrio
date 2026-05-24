@@ -5,13 +5,15 @@ import { motion } from "framer-motion";
 import { Send, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ScrollReveal } from "@/components/ui/scroll-reveal";
+import { useMutation } from "convex/react";
+import { api } from "../../../convex/_generated/api";
 
 const services = [
-  "Web Design & Development",
-  "Mobile App Development",
-  "Marketing Automation",
-  "SEO Optimization",
-  "Website Maintenance",
+  "Diagnosis ($1,500 — Digital System Roadmap)",
+  "Website or Platform Build",
+  "App Development",
+  "Automation & Integrations",
+  "Ongoing Support",
   "Other",
 ];
 
@@ -30,23 +32,21 @@ export function ContactFormSection() {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const createContact = useMutation(api.contacts.create);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
 
     try {
-      const res = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+      await createContact({
+        name: formData.name,
+        email: formData.email,
+        company: formData.company || undefined,
+        service: formData.service || undefined,
+        budget: formData.budget || undefined,
+        message: formData.message,
       });
-
-      if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.error || "Failed to send message");
-      }
-
       setIsSubmitted(true);
     } catch (err) {
       alert(err instanceof Error ? err.message : "Something went wrong. Please try again.");
@@ -75,10 +75,10 @@ export function ContactFormSection() {
               Let&apos;s Work Together
             </span>
             <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">
-              Start Your Project Today
+              Ready to stop guessing?
             </h2>
             <p className="text-white/50 text-lg">
-              Tell us about your goals and we&apos;ll get back to you within 24 hours.
+              Tell us about your business and we&apos;ll reach out within 24 hours to schedule your Diagnosis call.
             </p>
           </div>
         </ScrollReveal>

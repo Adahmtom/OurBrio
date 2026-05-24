@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useMutation } from "convex/react";
+import { api } from "../../../convex/_generated/api";
 import {
   ArrowRight,
   ArrowLeft,
@@ -113,6 +115,7 @@ export default function StartProjectPage() {
   const [formData, setFormData] = useState<FormData>(initialFormData);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const createInquiry = useMutation(api.inquiries.create);
   
   const totalSteps = 6;
 
@@ -140,18 +143,29 @@ export default function StartProjectPage() {
   const handleSubmit = async () => {
     setIsSubmitting(true);
     try {
-      const response = await fetch("/api/inquiries", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+      await createInquiry({
+        businessName: formData.businessName,
+        industry: formData.industry,
+        businessDescription: formData.businessDescription,
+        targetAudience: formData.targetAudience,
+        currentWebsite: formData.currentWebsite || undefined,
+        selectedServices: formData.selectedServices,
+        projectGoals: formData.projectGoals,
+        competitors: formData.competitors || undefined,
+        inspirationSites: formData.inspirationSites || undefined,
+        uniqueFeatures: formData.uniqueFeatures || undefined,
+        budget: formData.budget,
+        timeline: formData.timeline,
+        preferredDate: formData.preferredDate,
+        preferredTime: formData.preferredTime,
+        contactName: formData.contactName,
+        email: formData.email,
+        phone: formData.phone || undefined,
+        howDidYouHear: formData.howDidYouHear || undefined,
+        additionalNotes: formData.additionalNotes || undefined,
       });
-      
-      if (!response.ok) {
-        throw new Error("Failed to submit");
-      }
-      
       setIsSubmitted(true);
-    } catch (error) {
+    } catch {
       alert("Failed to submit. Please try again.");
     } finally {
       setIsSubmitting(false);

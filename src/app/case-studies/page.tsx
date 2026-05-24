@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { ArrowRight, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -90,6 +91,37 @@ export default function CaseStudiesPage() {
         data-section="hero"
         className="relative min-h-[60vh] flex items-center justify-center overflow-hidden bg-[#030303]"
       >
+        {/* Background Image */}
+        <div className="absolute inset-0">
+          <Image
+            src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1920&h=800&fit=crop"
+            alt="Case studies background"
+            fill
+            className="object-cover opacity-20"
+            priority
+          />
+          <div className="absolute inset-0 bg-gradient-to-br from-[#030303]/95 via-[#030303]/80 to-[#030303]/65" />
+        </div>
+
+        {/* Floating geometric shapes */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <motion.div
+            animate={{ rotate: 360 }}
+            transition={{ duration: 55, repeat: Infinity, ease: "linear" }}
+            className="absolute -top-32 -right-32 w-80 h-80 border border-emerald-500/20 rounded-3xl"
+          />
+          <motion.div
+            animate={{ rotate: -360 }}
+            transition={{ duration: 70, repeat: Infinity, ease: "linear" }}
+            className="absolute -bottom-16 -left-16 w-60 h-60 border border-green-500/[0.15] rounded-3xl"
+          />
+          <motion.div
+            animate={{ y: [0, -20, 0] }}
+            transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute top-1/3 left-1/3 w-40 h-40 bg-emerald-500/[0.06] rounded-full blur-2xl"
+          />
+        </div>
+
         <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/[0.05] via-transparent to-green-500/[0.05] blur-3xl" />
 
         <div className="relative z-10 container mx-auto px-4 md:px-6 pt-32 pb-20">

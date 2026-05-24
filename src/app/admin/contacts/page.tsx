@@ -1,13 +1,17 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { Search, Eye, Trash2, X } from "lucide-react";
+import { useState } from "react";
+import { Search, X } from "lucide-react";
 import { format } from "date-fns";
 import toast from "react-hot-toast";
 import { motion } from "framer-motion";
+import { useQuery, useMutation } from "convex/react";
+import { api } from "../../../../convex/_generated/api";
+import { Id } from "../../../../convex/_generated/dataModel";
 
-interface Contact {
-  id: string;
+type Contact = {
+  _id: Id<"contactSubmissions">;
+  _creationTime: number;
   name: string;
   email: string;
   company?: string;
@@ -15,8 +19,7 @@ interface Contact {
   budget?: string;
   message: string;
   status: string;
-  createdAt: string;
-}
+};
 
 const statusColors: Record<string, string> = {
   NEW: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
@@ -26,31 +29,27 @@ const statusColors: Record<string, string> = {
 };
 
 export default function ContactsPage() {
-  const [contacts, setContacts] = useState<Contact[]>([]);
-  const [loading, setLoading] = useState(true);
+  const contacts = useQuery(api.contacts.list, {}) as Contact[] | undefined;
+  const updateStatus = useMutation(api.contacts.updateStatus);
+
   const [selected, setSelected] = useState<Contact | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
 
-  useEffect(() => {
-    fetchContacts();
-  }, []);
-
-  const fetchContacts = async () => {
-    try {
-      const res = await fetch("/api/contact");
-      const data = await res.json();
-      setContacts(data.submissions || []);
-    } catch {
-      toast.error("Failed to load");
-    } finally {
-      setLoading(false);
+  const handleSelect = async (contact: Contact) => {
+    setSelected(contact);
+    if (contact.status === "NEW") {
+      try {
+        await updateStatus({ id: contact._id, status: "READ" });
+      } catch {
+        // silent
+      }
     }
   };
 
-  const filtered = contacts.filter(
+  const filtered = (contacts ?? []).filter(
     (c) =>
       c.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      c.email.toLowerCase().includes(searchTerm.toLowerCase())
+      c.email.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   return (
@@ -72,7 +71,7 @@ export default function ContactsPage() {
       </div>
 
       <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl overflow-hidden">
-        {loading ? (
+        {contacts === undefined ? (
           <div className="flex items-center justify-center h-64">
             <div className="w-8 h-8 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin" />
           </div>
@@ -82,8 +81,8 @@ export default function ContactsPage() {
           <div className="divide-y divide-zinc-800">
             {filtered.map((contact) => (
               <div
-                key={contact.id}
-                onClick={() => setSelected(contact)}
+                key={contact._id}
+                onClick={() => handleSelect(contact)}
                 className="p-6 hover:bg-zinc-800/30 cursor-pointer transition-colors"
               >
                 <div className="flex items-start justify-between">
@@ -93,10 +92,14 @@ export default function ContactsPage() {
                     <p className="text-zinc-400 mt-2 line-clamp-2">{contact.message}</p>
                   </div>
                   <div className="flex items-center gap-4">
-                    <span className={`px-3 py-1 rounded-full text-xs border ${statusColors[contact.status]}`}>
+                    <span
+                      className={`px-3 py-1 rounded-full text-xs border ${statusColors[contact.status]}`}
+                    >
                       {contact.status}
                     </span>
-                    <span className="text-zinc-500 text-sm">{format(new Date(contact.createdAt), "MMM d")}</span>
+                    <span className="text-zinc-500 text-sm">
+                      {format(new Date(contact._creationTime), "MMM d")}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -107,20 +110,55 @@ export default function ContactsPage() {
 
       {selected && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-zinc-900 border border-zinc-800 rounded-2xl w-full max-w-2xl">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-zinc-900 border border-zinc-800 rounded-2xl w-full max-w-2xl"
+          >
             <div className="border-b border-zinc-800 p-6 flex items-center justify-between">
               <h2 className="text-xl font-bold text-white">Message from {selected.name}</h2>
-              <button onClick={() => setSelected(null)} className="p-2 rounded-lg hover:bg-zinc-800 text-zinc-400"><X size={20} /></button>
+              <button
+                onClick={() => setSelected(null)}
+                className="p-2 rounded-lg hover:bg-zinc-800 text-zinc-400"
+              >
+                <X size={20} />
+              </button>
             </div>
             <div className="p-6 space-y-4">
               <div className="grid sm:grid-cols-2 gap-4">
-                <div><p className="text-zinc-400 text-sm">Email</p><p className="text-white">{selected.email}</p></div>
-                {selected.company && <div><p className="text-zinc-400 text-sm">Company</p><p className="text-white">{selected.company}</p></div>}
-                {selected.service && <div><p className="text-zinc-400 text-sm">Service</p><p className="text-white">{selected.service}</p></div>}
-                {selected.budget && <div><p className="text-zinc-400 text-sm">Budget</p><p className="text-white">{selected.budget}</p></div>}
+                <div>
+                  <p className="text-zinc-400 text-sm">Email</p>
+                  <p className="text-white">{selected.email}</p>
+                </div>
+                {selected.company && (
+                  <div>
+                    <p className="text-zinc-400 text-sm">Company</p>
+                    <p className="text-white">{selected.company}</p>
+                  </div>
+                )}
+                {selected.service && (
+                  <div>
+                    <p className="text-zinc-400 text-sm">Service</p>
+                    <p className="text-white">{selected.service}</p>
+                  </div>
+                )}
+                {selected.budget && (
+                  <div>
+                    <p className="text-zinc-400 text-sm">Budget</p>
+                    <p className="text-white">{selected.budget}</p>
+                  </div>
+                )}
               </div>
-              <div><p className="text-zinc-400 text-sm mb-2">Message</p><p className="text-white bg-zinc-800/50 p-4 rounded-xl">{selected.message}</p></div>
-              <a href={`mailto:${selected.email}`} className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500 text-black font-medium hover:bg-emerald-400">Reply via Email</a>
+              <div>
+                <p className="text-zinc-400 text-sm mb-2">Message</p>
+                <p className="text-white bg-zinc-800/50 p-4 rounded-xl">{selected.message}</p>
+              </div>
+              <a
+                href={`mailto:${selected.email}`}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500 text-black font-medium hover:bg-emerald-400"
+              >
+                Reply via Email
+              </a>
             </div>
           </motion.div>
         </div>

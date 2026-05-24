@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { signIn } from "next-auth/react";
+import { useAuthActions } from "@convex-dev/auth/react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { Lock, Mail, Eye, EyeOff, Loader2 } from "lucide-react";
@@ -9,6 +9,7 @@ import toast from "react-hot-toast";
 
 export default function AdminLoginPage() {
   const router = useRouter();
+  const { signIn } = useAuthActions();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -19,21 +20,11 @@ export default function AdminLoginPage() {
     setIsLoading(true);
 
     try {
-      const result = await signIn("credentials", {
-        email,
-        password,
-        redirect: false,
-      });
-
-      if (result?.error) {
-        toast.error("Invalid email or password");
-      } else {
-        toast.success("Welcome back!");
-        router.push("/admin");
-        router.refresh();
-      }
-    } catch (error) {
-      toast.error("Something went wrong");
+      await signIn("password", { email, password, flow: "signIn" });
+      toast.success("Welcome back!");
+      router.push("/admin");
+    } catch {
+      toast.error("Invalid email or password.");
     } finally {
       setIsLoading(false);
     }
@@ -55,9 +46,9 @@ export default function AdminLoginPage() {
         {/* Logo */}
         <div className="text-center mb-8">
           <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-emerald-400 to-green-600 flex items-center justify-center">
-            <span className="text-black font-bold text-2xl">ST</span>
+            <span className="text-black font-bold text-2xl">OB</span>
           </div>
-          <h1 className="text-2xl font-bold text-white">Admin Login</h1>
+          <h1 className="text-2xl font-bold text-white">Admin Portal</h1>
           <p className="text-zinc-400 mt-2">Sign in to access the dashboard</p>
         </div>
 
@@ -73,7 +64,7 @@ export default function AdminLoginPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full pl-12 pr-4 py-3 rounded-xl bg-zinc-800/50 border border-zinc-700 text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-500/50 transition-colors"
-                  placeholder="admin@ourbrio.com"
+                  placeholder="admin@example.com"
                   required
                 />
               </div>
@@ -90,6 +81,7 @@ export default function AdminLoginPage() {
                   className="w-full pl-12 pr-12 py-3 rounded-xl bg-zinc-800/50 border border-zinc-700 text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-500/50 transition-colors"
                   placeholder="••••••••"
                   required
+                  minLength={8}
                 />
                 <button
                   type="button"
@@ -117,13 +109,6 @@ export default function AdminLoginPage() {
             </button>
           </div>
         </form>
-
-        {/* Demo credentials */}
-        <div className="mt-6 p-4 rounded-xl bg-zinc-900/30 border border-zinc-800/50">
-          <p className="text-zinc-500 text-sm text-center">
-            Demo: <span className="text-zinc-300">admin@ourbrio.com</span> / <span className="text-zinc-300">admin123</span>
-          </p>
-        </div>
       </motion.div>
     </div>
   );

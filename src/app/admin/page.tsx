@@ -19,33 +19,9 @@ import {
   Zap,
 } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
-
-interface DashboardStats {
-  stats: {
-    inquiries: { total: number; new: number };
-    contacts: { total: number; new: number };
-    caseStudies: { total: number; published: number };
-    testimonials: { total: number; published: number };
-  };
-  recent: {
-    inquiries: Array<{
-      id: string;
-      businessName: string;
-      contactName: string;
-      email: string;
-      status: string;
-      createdAt: string;
-    }>;
-    contacts: Array<{
-      id: string;
-      name: string;
-      email: string;
-      status: string;
-      createdAt: string;
-    }>;
-  };
-}
+import { useState, useEffect } from "react";
+import { useQuery } from "convex/react";
+import { api } from "../../../convex/_generated/api";
 
 const statusColors: Record<string, string> = {
   NEW: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
@@ -64,48 +40,15 @@ const quickActions = [
 ];
 
 export default function AdminDashboard() {
-  const [data, setData] = useState<DashboardStats | null>(null);
-  const [loading, setLoading] = useState(true);
+  const data = useQuery(api.dashboard.stats);
   const [currentTime, setCurrentTime] = useState(new Date());
 
   useEffect(() => {
-    fetch("/api/dashboard/stats")
-      .then((res) => res.json())
-      .then((responseData) => {
-        // Ensure we have proper data structure
-        const safeData = {
-          stats: {
-            inquiries: { total: responseData?.stats?.inquiries?.total || 0, new: responseData?.stats?.inquiries?.new || 0 },
-            contacts: { total: responseData?.stats?.contacts?.total || 0, new: responseData?.stats?.contacts?.new || 0 },
-            caseStudies: { total: responseData?.stats?.caseStudies?.total || 0, published: responseData?.stats?.caseStudies?.published || 0 },
-            testimonials: { total: responseData?.stats?.testimonials?.total || 0, published: responseData?.stats?.testimonials?.published || 0 },
-          },
-          recent: {
-            inquiries: Array.isArray(responseData?.recent?.inquiries) ? responseData.recent.inquiries : [],
-            contacts: Array.isArray(responseData?.recent?.contacts) ? responseData.recent.contacts : [],
-          },
-        };
-        setData(safeData);
-        setLoading(false);
-      })
-      .catch(() => {
-        setData({
-          stats: {
-            inquiries: { total: 0, new: 0 },
-            contacts: { total: 0, new: 0 },
-            caseStudies: { total: 0, published: 0 },
-            testimonials: { total: 0, published: 0 },
-          },
-          recent: { inquiries: [], contacts: [] },
-        });
-        setLoading(false);
-      });
-  
     const timer = setInterval(() => setCurrentTime(new Date()), 60000);
     return () => clearInterval(timer);
   }, []);
-  
-  if (loading) {
+
+  if (data === undefined) {
     return (
       <div className="flex items-center justify-center h-[80vh]">
         <div className="text-center">
@@ -116,15 +59,17 @@ export default function AdminDashboard() {
     );
   }
 
-const totalLeads = (data?.stats?.inquiries?.total || 0) + (data?.stats?.contacts?.total || 0);
-const newLeads = (data?.stats?.inquiries?.new || 0) + (data?.stats?.contacts?.new || 0);
+  const totalLeads =
+    (data?.stats?.inquiries?.total || 0) + (data?.stats?.contacts?.total || 0);
+  const newLeads =
+    (data?.stats?.inquiries?.new || 0) + (data?.stats?.contacts?.new || 0);
 
   return (
     <div className="space-y-8 pb-8">
       {/* Header */}
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
         <div>
-          <motion.h1 
+          <motion.h1
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             className="text-3xl lg:text-4xl font-bold text-white"
@@ -149,7 +94,6 @@ const newLeads = (data?.stats?.inquiries?.new || 0) + (data?.stats?.contacts?.ne
 
       {/* Main Stats */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {/* Total Leads */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -177,7 +121,6 @@ const newLeads = (data?.stats?.inquiries?.new || 0) + (data?.stats?.contacts?.ne
           </div>
         </motion.div>
 
-        {/* Project Inquiries */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -197,15 +140,19 @@ const newLeads = (data?.stats?.inquiries?.new || 0) + (data?.stats?.contacts?.ne
               )}
             </div>
             <p className="text-zinc-400 text-sm">Project Inquiries</p>
-            <p className="text-4xl font-bold text-white mt-1">{data?.stats.inquiries.total || 0}</p>
-            <Link href="/admin/inquiries" className="flex items-center gap-1 mt-2 text-blue-400 text-sm hover:underline">
+            <p className="text-4xl font-bold text-white mt-1">
+              {data?.stats.inquiries.total || 0}
+            </p>
+            <Link
+              href="/admin/inquiries"
+              className="flex items-center gap-1 mt-2 text-blue-400 text-sm hover:underline"
+            >
               <span>View all</span>
               <ArrowUpRight className="w-4 h-4" />
             </Link>
           </div>
         </motion.div>
 
-        {/* Case Studies */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -223,15 +170,19 @@ const newLeads = (data?.stats?.inquiries?.new || 0) + (data?.stats?.contacts?.ne
               </span>
             </div>
             <p className="text-zinc-400 text-sm">Case Studies</p>
-            <p className="text-4xl font-bold text-white mt-1">{data?.stats.caseStudies.total || 0}</p>
-            <Link href="/admin/case-studies" className="flex items-center gap-1 mt-2 text-purple-400 text-sm hover:underline">
+            <p className="text-4xl font-bold text-white mt-1">
+              {data?.stats.caseStudies.total || 0}
+            </p>
+            <Link
+              href="/admin/case-studies"
+              className="flex items-center gap-1 mt-2 text-purple-400 text-sm hover:underline"
+            >
               <span>Manage portfolio</span>
               <ArrowUpRight className="w-4 h-4" />
             </Link>
           </div>
         </motion.div>
 
-        {/* Testimonials */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -249,8 +200,13 @@ const newLeads = (data?.stats?.inquiries?.new || 0) + (data?.stats?.contacts?.ne
               </span>
             </div>
             <p className="text-zinc-400 text-sm">Testimonials</p>
-            <p className="text-4xl font-bold text-white mt-1">{data?.stats.testimonials.total || 0}</p>
-            <Link href="/admin/testimonials" className="flex items-center gap-1 mt-2 text-orange-400 text-sm hover:underline">
+            <p className="text-4xl font-bold text-white mt-1">
+              {data?.stats.testimonials.total || 0}
+            </p>
+            <Link
+              href="/admin/testimonials"
+              className="flex items-center gap-1 mt-2 text-orange-400 text-sm hover:underline"
+            >
               <span>Manage reviews</span>
               <ArrowUpRight className="w-4 h-4" />
             </Link>
@@ -278,7 +234,9 @@ const newLeads = (data?.stats?.inquiries?.new || 0) + (data?.stats?.contacts?.ne
                 className="p-4 rounded-xl bg-zinc-800/50 border border-zinc-700 hover:border-emerald-500/50 transition-all cursor-pointer group"
               >
                 <action.icon className="w-8 h-8 text-emerald-400 mb-3" />
-                <p className="text-white font-medium group-hover:text-emerald-400 transition-colors">{action.label}</p>
+                <p className="text-white font-medium group-hover:text-emerald-400 transition-colors">
+                  {action.label}
+                </p>
               </motion.div>
             </Link>
           ))}
@@ -299,7 +257,10 @@ const newLeads = (data?.stats?.inquiries?.new || 0) + (data?.stats?.contacts?.ne
               <FolderKanban className="w-5 h-5 text-emerald-400" />
               Recent Project Inquiries
             </h2>
-            <Link href="/admin/inquiries" className="text-emerald-400 text-sm hover:underline flex items-center gap-1">
+            <Link
+              href="/admin/inquiries"
+              className="text-emerald-400 text-sm hover:underline flex items-center gap-1"
+            >
               View all <ArrowUpRight className="w-4 h-4" />
             </Link>
           </div>
@@ -308,13 +269,12 @@ const newLeads = (data?.stats?.inquiries?.new || 0) + (data?.stats?.contacts?.ne
             <div className="text-center py-12">
               <FolderKanban className="w-12 h-12 text-zinc-700 mx-auto mb-3" />
               <p className="text-zinc-500">No inquiries yet</p>
-              <p className="text-zinc-600 text-sm mt-1">New project inquiries will appear here</p>
             </div>
           ) : (
             <div className="space-y-3">
               {data?.recent.inquiries.map((inquiry, index) => (
                 <motion.div
-                  key={inquiry.id}
+                  key={inquiry._id}
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.7 + index * 0.1 }}
@@ -339,11 +299,13 @@ const newLeads = (data?.stats?.inquiries?.new || 0) + (data?.stats?.contacts?.ne
                       </div>
                     </div>
                     <div className="flex items-center gap-3">
-                      <span className={`px-3 py-1 rounded-full text-xs border ${statusColors[inquiry.status]}`}>
+                      <span
+                        className={`px-3 py-1 rounded-full text-xs border ${statusColors[inquiry.status]}`}
+                      >
                         {inquiry.status}
                       </span>
                       <span className="text-zinc-500 text-sm hidden sm:block">
-                        {format(new Date(inquiry.createdAt), "MMM d")}
+                        {format(new Date(inquiry._creationTime), "MMM d")}
                       </span>
                     </div>
                   </Link>
@@ -380,10 +342,15 @@ const newLeads = (data?.stats?.inquiries?.new || 0) + (data?.stats?.contacts?.ne
             ) : (
               <div className="space-y-3">
                 {data?.recent.contacts.slice(0, 3).map((contact) => (
-                  <div key={contact.id} className="p-3 rounded-xl bg-zinc-800/30 hover:bg-zinc-800/50 transition-colors">
+                  <div
+                    key={contact._id}
+                    className="p-3 rounded-xl bg-zinc-800/30 hover:bg-zinc-800/50 transition-colors"
+                  >
                     <div className="flex items-center justify-between">
                       <p className="font-medium text-white text-sm">{contact.name}</p>
-                      <span className={`px-2 py-0.5 rounded-full text-xs ${statusColors[contact.status]}`}>
+                      <span
+                        className={`px-2 py-0.5 rounded-full text-xs ${statusColors[contact.status]}`}
+                      >
                         {contact.status}
                       </span>
                     </div>
@@ -447,7 +414,10 @@ const newLeads = (data?.stats?.inquiries?.new || 0) + (data?.stats?.contacts?.ne
           <Link href="/" className="text-zinc-400 hover:text-white text-sm flex items-center gap-1">
             <Globe className="w-4 h-4" /> View Website
           </Link>
-          <Link href="/admin/calendar" className="text-zinc-400 hover:text-white text-sm flex items-center gap-1">
+          <Link
+            href="/admin/calendar"
+            className="text-zinc-400 hover:text-white text-sm flex items-center gap-1"
+          >
             <Calendar className="w-4 h-4" /> Manage Availability
           </Link>
         </div>

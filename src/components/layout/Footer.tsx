@@ -13,7 +13,6 @@ import {
   Github,
   ArrowRight,
   ArrowUpRight,
-  Rocket,
 } from "lucide-react";
 
 const footerLinks = {
@@ -24,13 +23,13 @@ const footerLinks = {
     { label: "Contact", href: "/contact" },
   ],
   services: [
-    { label: "Web Development", href: "/services#web-development" },
-    { label: "Mobile Apps", href: "/services#mobile-apps" },
-    { label: "Marketing Automation", href: "/services#automation" },
-    { label: "SEO Optimization", href: "/services#seo" },
+    { label: "The Diagnosis", href: "/services#diagnosis" },
+    { label: "Website & Platform Build", href: "/services#web-development" },
+    { label: "App Development", href: "/services#mobile-apps" },
+    { label: "Automation & Integrations", href: "/services#automation" },
   ],
   resources: [
-    { label: "Start a Project", href: "/start-project" },
+    { label: "Book a Diagnosis Call", href: "/contact" },
     { label: "FAQs", href: "/contact#faq" },
     { label: "Privacy Policy", href: "/privacy" },
     { label: "Terms of Service", href: "/terms" },
@@ -68,7 +67,7 @@ export function Footer() {
               transition={{ duration: 4, repeat: Infinity }}
               className="absolute top-0 right-1/4 w-96 h-96 bg-emerald-500/20 rounded-full blur-[120px]"
             />
-            
+
             <div className="relative z-10 p-10 md:p-16 lg:p-20 text-center">
               <motion.h2
                 initial={{ opacity: 0, y: 20 }}
@@ -76,12 +75,12 @@ export function Footer() {
                 viewport={{ once: true }}
                 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6"
               >
-                Ready to Transform Your{" "}
+                Stop guessing.{" "}
                 <span className="bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-green-300">
-                  Digital Presence?
+                  Start diagnosing.
                 </span>
               </motion.h2>
-              
+
               <motion.p
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -89,7 +88,8 @@ export function Footer() {
                 transition={{ delay: 0.1 }}
                 className="text-white/60 text-lg md:text-xl max-w-2xl mx-auto mb-10"
               >
-                Let&apos;s discuss how we can help you achieve your business goals with a tailored digital strategy.
+                We diagnose what your business actually needs — then prescribe
+                and build only what moves you forward.
               </motion.p>
 
               <motion.div
@@ -99,18 +99,18 @@ export function Footer() {
                 transition={{ delay: 0.2 }}
                 className="flex flex-col sm:flex-row items-center justify-center gap-4"
               >
-                <Link href="/start-project">
+                <Link href="/contact">
                   <motion.button
                     whileHover={{ scale: 1.02, y: -2 }}
                     whileTap={{ scale: 0.98 }}
                     className="group flex items-center gap-2 px-5 py-3 sm:px-8 sm:py-4 rounded-full bg-emerald-500 text-black font-semibold text-sm sm:text-lg shadow-lg shadow-emerald-500/25 hover:bg-emerald-400 transition-all"
                   >
-                    <Rocket className="w-4 h-4 sm:w-5 sm:h-5" />
-                    Start a Project
+                    <Phone className="w-4 h-4 sm:w-5 sm:h-5" />
+                    Book a Diagnosis Call
                     <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 transition-transform group-hover:translate-x-1" />
                   </motion.button>
                 </Link>
-                
+
                 <Link href="/contact">
                   <motion.button
                     whileHover={{ scale: 1.02, y: -2 }}
@@ -135,13 +135,19 @@ export function Footer() {
             {/* Brand Column */}
             <div className="lg:col-span-2">
               <Link href="/" className="flex items-center gap-3 mb-6">
-                <Image src="/logo.svg" alt="OurBrio" width={120} height={40} className="h-10 w-auto" />
+                <Image
+                  src="/logo.svg"
+                  alt="OurBrio"
+                  width={120}
+                  height={40}
+                  className="h-10 w-auto"
+                />
               </Link>
               <p className="text-white/50 leading-relaxed mb-8 max-w-sm">
-                We design, build, and automate digital systems that help brands
-                stand out and scale. Strategic solutions for modern businesses.
+                We diagnose what your business actually needs — then build it.
+                Platform-agnostic. Methodology-first. No templates.
               </p>
-              
+
               {/* Social Links */}
               <div className="flex gap-3">
                 {socialLinks.map((social) => (
@@ -200,13 +206,13 @@ export function Footer() {
               <ul className="space-y-4">
                 <li>
                   <a
-                    href="mailto:OurBrio@gmail.com"
+                    href="mailto:info@ourbrio.com"
                     className="flex items-center gap-3 text-white/50 hover:text-emerald-400 transition-colors"
                   >
                     <div className="w-9 h-9 rounded-lg bg-white/5 flex items-center justify-center">
                       <Mail size={16} />
                     </div>
-                    <span className="text-sm">OurBrio@gmail.com</span>
+                    <span className="text-sm">info@ourbrio.com</span>
                   </a>
                 </li>
                 <li>

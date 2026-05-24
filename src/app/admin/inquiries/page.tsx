@@ -1,13 +1,17 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { Search, Eye, Trash2, Mail, Phone, Building2, Calendar, X } from "lucide-react";
 import { format } from "date-fns";
 import toast from "react-hot-toast";
+import { useQuery, useMutation } from "convex/react";
+import { api } from "../../../../convex/_generated/api";
+import { Id } from "../../../../convex/_generated/dataModel";
 
-interface Inquiry {
-  id: string;
+type Inquiry = {
+  _id: Id<"projectInquiries">;
+  _creationTime: number;
   businessName: string;
   industry: string;
   businessDescription: string;
@@ -23,8 +27,7 @@ interface Inquiry {
   email: string;
   phone?: string;
   status: string;
-  createdAt: string;
-}
+};
 
 const statusColors: Record<string, string> = {
   NEW: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
@@ -44,62 +47,50 @@ const serviceLabels: Record<string, string> = {
 };
 
 export default function InquiriesPage() {
-  const [inquiries, setInquiries] = useState<Inquiry[]>([]);
-  const [loading, setLoading] = useState(true);
+  const inquiries = useQuery(api.inquiries.list, {}) as Inquiry[] | undefined;
+  const updateStatus = useMutation(api.inquiries.updateStatus);
+  const removeInquiry = useMutation(api.inquiries.remove);
+
   const [selectedInquiry, setSelectedInquiry] = useState<Inquiry | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
 
-  useEffect(() => {
-    fetchInquiries();
-  }, [statusFilter]);
-
-  const fetchInquiries = async () => {
+  const handleUpdateStatus = async (id: Id<"projectInquiries">, status: string) => {
     try {
-      const params = new URLSearchParams();
-      if (statusFilter) params.set("status", statusFilter);
-      const res = await fetch(`/api/inquiries?${params}`);
-      const data = await res.json();
-      setInquiries(data.inquiries || []);
-    } catch {
-      toast.error("Failed to load inquiries");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const updateStatus = async (id: string, status: string) => {
-    try {
-      await fetch(`/api/inquiries/${id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status }),
+      await updateStatus({
+        id,
+        status: status as
+          | "NEW"
+          | "CONTACTED"
+          | "IN_PROGRESS"
+          | "COMPLETED"
+          | "CANCELLED",
       });
       toast.success("Status updated");
-      fetchInquiries();
     } catch {
       toast.error("Failed to update");
     }
   };
 
-  const deleteInquiry = async (id: string) => {
+  const handleDelete = async (id: Id<"projectInquiries">) => {
     if (!confirm("Delete this inquiry?")) return;
     try {
-      await fetch(`/api/inquiries/${id}`, { method: "DELETE" });
+      await removeInquiry({ id });
       toast.success("Deleted");
-      fetchInquiries();
-      if (selectedInquiry?.id === id) setSelectedInquiry(null);
+      if (selectedInquiry?._id === id) setSelectedInquiry(null);
     } catch {
       toast.error("Failed to delete");
     }
   };
 
-  const filtered = inquiries.filter(
-    (i) =>
+  const filtered = (inquiries ?? []).filter((i) => {
+    const matchesSearch =
       i.businessName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       i.contactName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      i.email.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+      i.email.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesStatus = statusFilter ? i.status === statusFilter : true;
+    return matchesSearch && matchesStatus;
+  });
 
   return (
     <div className="space-y-6">
@@ -134,7 +125,7 @@ export default function InquiriesPage() {
       </div>
 
       <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl overflow-hidden">
-        {loading ? (
+        {inquiries === undefined ? (
           <div className="flex items-center justify-center h-64">
             <div className="w-8 h-8 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin" />
           </div>
@@ -154,7 +145,7 @@ export default function InquiriesPage() {
               </thead>
               <tbody className="divide-y divide-zinc-800">
                 {filtered.map((inquiry) => (
-                  <tr key={inquiry.id} className="hover:bg-zinc-800/30">
+                  <tr key={inquiry._id} className="hover:bg-zinc-800/30">
                     <td className="px-6 py-4">
                       <p className="font-medium text-white">{inquiry.businessName}</p>
                       <p className="text-zinc-500 text-sm">{inquiry.industry}</p>
@@ -166,7 +157,7 @@ export default function InquiriesPage() {
                     <td className="px-6 py-4">
                       <select
                         value={inquiry.status}
-                        onChange={(e) => updateStatus(inquiry.id, e.target.value)}
+                        onChange={(e) => handleUpdateStatus(inquiry._id, e.target.value)}
                         className={`px-3 py-1 rounded-full text-xs border cursor-pointer ${statusColors[inquiry.status]}`}
                       >
                         <option value="NEW">New</option>
@@ -177,14 +168,20 @@ export default function InquiriesPage() {
                       </select>
                     </td>
                     <td className="px-6 py-4 text-zinc-400 text-sm">
-                      {format(new Date(inquiry.createdAt), "MMM d, yyyy")}
+                      {format(new Date(inquiry._creationTime), "MMM d, yyyy")}
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center justify-end gap-2">
-                        <button onClick={() => setSelectedInquiry(inquiry)} className="p-2 rounded-lg hover:bg-zinc-800 text-zinc-400 hover:text-white">
+                        <button
+                          onClick={() => setSelectedInquiry(inquiry)}
+                          className="p-2 rounded-lg hover:bg-zinc-800 text-zinc-400 hover:text-white"
+                        >
                           <Eye size={18} />
                         </button>
-                        <button onClick={() => deleteInquiry(inquiry.id)} className="p-2 rounded-lg hover:bg-red-500/10 text-zinc-400 hover:text-red-400">
+                        <button
+                          onClick={() => handleDelete(inquiry._id)}
+                          className="p-2 rounded-lg hover:bg-red-500/10 text-zinc-400 hover:text-red-400"
+                        >
                           <Trash2 size={18} />
                         </button>
                       </div>
@@ -199,36 +196,86 @@ export default function InquiriesPage() {
 
       {selectedInquiry && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-zinc-900 border border-zinc-800 rounded-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-zinc-900 border border-zinc-800 rounded-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto"
+          >
             <div className="sticky top-0 bg-zinc-900 border-b border-zinc-800 p-6 flex items-center justify-between">
               <h2 className="text-xl font-bold text-white">{selectedInquiry.businessName}</h2>
-              <button onClick={() => setSelectedInquiry(null)} className="p-2 rounded-lg hover:bg-zinc-800 text-zinc-400"><X size={20} /></button>
+              <button
+                onClick={() => setSelectedInquiry(null)}
+                className="p-2 rounded-lg hover:bg-zinc-800 text-zinc-400"
+              >
+                <X size={20} />
+              </button>
             </div>
             <div className="p-6 space-y-6">
               <div className="grid sm:grid-cols-2 gap-4">
                 <div className="flex items-center gap-3 p-4 rounded-xl bg-zinc-800/50">
                   <Building2 className="w-5 h-5 text-emerald-400" />
-                  <div><p className="text-zinc-400 text-sm">Business</p><p className="text-white">{selectedInquiry.businessName}</p></div>
+                  <div>
+                    <p className="text-zinc-400 text-sm">Business</p>
+                    <p className="text-white">{selectedInquiry.businessName}</p>
+                  </div>
                 </div>
                 <div className="flex items-center gap-3 p-4 rounded-xl bg-zinc-800/50">
                   <Mail className="w-5 h-5 text-blue-400" />
-                  <div><p className="text-zinc-400 text-sm">Email</p><p className="text-white">{selectedInquiry.email}</p></div>
+                  <div>
+                    <p className="text-zinc-400 text-sm">Email</p>
+                    <p className="text-white">{selectedInquiry.email}</p>
+                  </div>
                 </div>
                 {selectedInquiry.phone && (
                   <div className="flex items-center gap-3 p-4 rounded-xl bg-zinc-800/50">
                     <Phone className="w-5 h-5 text-green-400" />
-                    <div><p className="text-zinc-400 text-sm">Phone</p><p className="text-white">{selectedInquiry.phone}</p></div>
+                    <div>
+                      <p className="text-zinc-400 text-sm">Phone</p>
+                      <p className="text-white">{selectedInquiry.phone}</p>
+                    </div>
                   </div>
                 )}
                 <div className="flex items-center gap-3 p-4 rounded-xl bg-zinc-800/50">
                   <Calendar className="w-5 h-5 text-purple-400" />
-                  <div><p className="text-zinc-400 text-sm">Scheduled</p><p className="text-white">{format(new Date(selectedInquiry.preferredDate), "MMM d, yyyy")} at {selectedInquiry.preferredTime}</p></div>
+                  <div>
+                    <p className="text-zinc-400 text-sm">Scheduled</p>
+                    <p className="text-white">
+                      {selectedInquiry.preferredDate} at {selectedInquiry.preferredTime}
+                    </p>
+                  </div>
                 </div>
               </div>
-              <div><h3 className="text-white font-semibold mb-3">Services</h3><div className="flex flex-wrap gap-2">{selectedInquiry.selectedServices.map((s) => (<span key={s} className="px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-sm">{serviceLabels[s] || s}</span>))}</div></div>
-              <div><h3 className="text-white font-semibold mb-2">Description</h3><p className="text-zinc-400">{selectedInquiry.businessDescription}</p></div>
-              <div><h3 className="text-white font-semibold mb-2">Goals</h3><p className="text-zinc-400">{selectedInquiry.projectGoals}</p></div>
-              <div className="grid sm:grid-cols-2 gap-4"><div><h3 className="text-white font-semibold mb-2">Budget</h3><p className="text-zinc-400">{selectedInquiry.budget}</p></div><div><h3 className="text-white font-semibold mb-2">Timeline</h3><p className="text-zinc-400">{selectedInquiry.timeline}</p></div></div>
+              <div>
+                <h3 className="text-white font-semibold mb-3">Services</h3>
+                <div className="flex flex-wrap gap-2">
+                  {selectedInquiry.selectedServices.map((s) => (
+                    <span
+                      key={s}
+                      className="px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-sm"
+                    >
+                      {serviceLabels[s] || s}
+                    </span>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <h3 className="text-white font-semibold mb-2">Description</h3>
+                <p className="text-zinc-400">{selectedInquiry.businessDescription}</p>
+              </div>
+              <div>
+                <h3 className="text-white font-semibold mb-2">Goals</h3>
+                <p className="text-zinc-400">{selectedInquiry.projectGoals}</p>
+              </div>
+              <div className="grid sm:grid-cols-2 gap-4">
+                <div>
+                  <h3 className="text-white font-semibold mb-2">Budget</h3>
+                  <p className="text-zinc-400">{selectedInquiry.budget}</p>
+                </div>
+                <div>
+                  <h3 className="text-white font-semibold mb-2">Timeline</h3>
+                  <p className="text-zinc-400">{selectedInquiry.timeline}</p>
+                </div>
+              </div>
             </div>
           </motion.div>
         </div>
